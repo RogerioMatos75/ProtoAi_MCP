@@ -1,0 +1,24 @@
+version: v1
+plugins:
+  # Geração de código Go
+  - plugin: go
+    out: ../gen/proto
+    opt:
+      - paths=source_relative
+  # Geração de código gRPC Go
+  - plugin: go-grpc
+    out: ../gen/proto
+    opt:
+      - paths=source_relative
+  # Validação de campos (opcional)
+  - plugin: validate
+    out: ../gen/proto
+    opt:
+      - lang=go
+      - paths=source_relative
+  # Gateway REST (opcional)
+  - plugin: grpc-gateway
+    out: ../gen/proto
+    opt:
+      - paths=source_relative
+      - generate_unbound_methods=true

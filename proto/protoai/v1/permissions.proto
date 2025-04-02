@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package protoai.v1;
+
+option go_package = "gen/proto/protoai/v1";
+
+// Definição de permissões e controle de acesso
+message PermissionsConfig {
+  repeated Role roles = 1;
+  repeated Permission permissions = 2;
+}
+
+// Definição de papel (role)
+message Role {
+  string name = 1;
+  string description = 2;
+  repeated string permissions = 3;
+}
+
+// Definição de permissão
+message Permission {
+  string name = 1;
+  string description = 2;
+  string resource = 3;
+  repeated string actions = 4;
+}
+
+// Ações possíveis em recursos
+enum Action {
+  ACTION_UNSPECIFIED = 0;
+  ACTION_READ = 1;
+  ACTION_WRITE = 2;
+  ACTION_DELETE = 3;
+  ACTION_ADMIN = 4;
+}
+
+// Regra de acesso
+message AccessRule {
+  string resource = 1;
+  repeated Action required_actions = 2;
+  repeated string required_roles = 3;
+}

@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package protoai.v1;
+
+option go_package = "gen/proto/protoai/v1";
+
+// Regras de exclusão para campos sensíveis
+message IgnoreRules {
+  repeated FieldIgnoreRule field_rules = 1;
+  repeated MessageIgnoreRule message_rules = 2;
+  repeated ServiceIgnoreRule service_rules = 3;
+}
+
+// Regra de exclusão para campos específicos
+message FieldIgnoreRule {
+  string field_name = 1;
+  string message_type = 2;
+  IgnoreType ignore_type = 3;
+  string description = 4;
+}
+
+// Regra de exclusão para mensagens inteiras
+message MessageIgnoreRule {
+  string message_name = 1;
+  IgnoreType ignore_type = 2;
+  string description = 3;
+}
+
+// Regra de exclusão para serviços
+message ServiceIgnoreRule {
+  string service_name = 1;
+  repeated string method_names = 2;
+  IgnoreType ignore_type = 3;
+  string description = 4;
+}
+
+// Tipos de exclusão
+enum IgnoreType {
+  IGNORE_TYPE_UNSPECIFIED = 0;
+  IGNORE_TYPE_SERIALIZE = 1;    // Ignorar durante serialização
+  IGNORE_TYPE_DESERIALIZE = 2;  // Ignorar durante desserialização
+  IGNORE_TYPE_BOTH = 3;         // Ignorar em ambos os casos
+  IGNORE_TYPE_LOG = 4;          // Ignorar em logs
+  IGNORE_TYPE_EXPORT = 5;       // Ignorar em exportações
+}

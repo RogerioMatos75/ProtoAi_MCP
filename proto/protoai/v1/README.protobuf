@@ -1,0 +1,45 @@
+# Manifesto Semântico do Serviço ProtoAi MCP
+
+## Visão Geral
+Este diretório contém as definições de protocolo que formam o coração do ProtoAi MCP. 
+As interfaces definidas aqui estabelecem o contrato de comunicação entre os diferentes 
+componentes do sistema.
+
+## Estrutura de Arquivos
+
+### meu_servico.proto
+Define as mensagens e serviços RPC específicos deste projeto. Este é o arquivo principal 
+que especifica a interface da API.
+
+### auth.proto
+Especifica os métodos de autenticação suportados pelo serviço, incluindo:
+- JWT
+- API Key
+- OAuth2
+- Configurações MFA
+- Políticas de expiração de token
+
+### permissions.proto
+Implementa o modelo de controle de acesso baseado em papéis (RBAC), definindo:
+- Papéis do sistema
+- Permissões por papel
+- Regras de acesso a recursos
+
+### ignore.proto
+Define regras para omissão de dados sensíveis durante:
+- Serialização/Desserialização
+- Logging
+- Exportação de dados
+
+## Convenções
+- Todos os arquivos .proto usam sintaxe proto3
+- Campos obrigatórios são indicados em comentários
+- Enums começam com valor 0 como UNSPECIFIED
+- Nomes de serviços são em PascalCase
+- Nomes de campos são em snake_case
+
+## Versionamento
+Este serviço segue versionamento semântico:
+- Mudanças breaking alteram o número da versão principal
+- Novas funcionalidades incrementam a versão menor
+- Correções incrementam a versão de patch

@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package protoai.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Tipos comuns de status
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_ACTIVE = 1;
+  STATUS_INACTIVE = 2;
+  STATUS_PENDING = 3;
+  STATUS_DELETED = 4;
+}
+
+// Informações básicas de usuário
+message UserInfo {
+  string user_id = 1;
+  string username = 2;
+  string email = 3;
+  Status status = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+// Estrutura de erro padronizada
+message Error {
+  string code = 1;
+  string message = 2;
+  map<string, string> details = 3;
+}
+
+// Estrutura de paginação comum
+message PaginationRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message PaginationResponse {
+  string next_page_token = 1;
+  int32 total_items = 2;
+}
+
+// Estrutura de resposta padrão
+message StandardResponse {
+  bool success = 1;
+  Error error = 2;
+  map<string, string> metadata = 3;
+}
+
+// Estrutura de filtro de data comum
+message DateRange {
+  google.protobuf.Timestamp start_date = 1;
+  google.protobuf.Timestamp end_date = 2;
+}
+
+// Estrutura de ordenação comum
+message SortOrder {
+  string field = 1;
+  bool ascending = 2;
+}

@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package protoai.v1;
+
+import "google/protobuf/duration.proto";
+
+// Serviço para gerenciamento de limites de taxa
+service RateLimitService {
+  // Verifica se uma requisição está dentro dos limites
+  rpc CheckRateLimit (CheckRateLimitRequest) returns (CheckRateLimitResponse);
+  // Atualiza configurações de limite de taxa
+  rpc UpdateRateLimit (UpdateRateLimitRequest) returns (UpdateRateLimitResponse);
+}
+
+// Tipos de limites de taxa
+enum RateLimitType {
+  RATE_LIMIT_TYPE_UNSPECIFIED = 0;
+  RATE_LIMIT_TYPE_USER = 1;
+  RATE_LIMIT_TYPE_IP = 2;
+  RATE_LIMIT_TYPE_API_KEY = 3;
+  RATE_LIMIT_TYPE_SERVICE = 4;
+}
+
+// Configuração de limite de taxa
+message RateLimitConfig {
+  string id = 1;
+  RateLimitType type = 2;
+  string target_id = 3;  // ID do usuário, IP ou serviço
+  int32 requests_per_unit = 4;
+  google.protobuf.Duration time_unit = 5;
+  bool block_on_exceed = 6;
+  map<string, string> metadata = 7;
+}
+
+message CheckRateLimitRequest {
+  RateLimitType type = 1;
+  string target_id = 2;
+  string endpoint = 3;
+}
+
+message CheckRateLimitResponse {
+  bool allowed = 1;
+  int32 remaining_requests = 2;
+  google.protobuf.Duration reset_after = 3;
+}
+
+message UpdateRateLimitRequest {
+  RateLimitConfig config = 1;
+}
+
+message UpdateRateLimitResponse {
+  RateLimitConfig config = 1;
+}

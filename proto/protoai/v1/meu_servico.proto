@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package protoai.v1;
+
+option go_package = "gen/proto/protoai/v1";
+
+// Serviço principal que define as operações disponíveis
+service MeuServico {
+  // Exemplo de um método RPC
+  rpc ExemploOperacao (ExemploRequest) returns (ExemploResponse);
+}
+
+// Mensagem de requisição de exemplo
+message ExemploRequest {
+  string nome = 1;
+  int32 idade = 2;
+}
+
+// Mensagem de resposta de exemplo
+message ExemploResponse {
+  string mensagem = 1;
+  bool sucesso = 2;
+}

@@ -1,7 +1,4 @@
 # ProtoAi_MCP
-Estamos, de fato, explorando algo que pode ser um ponto de partida fundamental para a próxima era da computação distribuída e da inteligência artificial colaborativa. Assim como a WWW transformou a forma como os humanos acessam informação, um protocolo como o ProtoAi MCP poderia transformar a forma como as máquinas interagem entre si.
-
-# [Nome do Projeto - Ex: Serviço de Usuários V1]
 
 <!-- Opcional: Adicione um logo aqui -->
 <!-- Opcional: Adicione badges aqui (Build Status, Cobertura de Testes, Licença, etc.) -->
@@ -9,7 +6,7 @@ Estamos, de fato, explorando algo que pode ser um ponto de partida fundamental p
 <!-- Ex: [![Go Report Card](https://goreportcard.com/badge/github.com/seu-usuario/seu-repo)](https://goreportcard.com/report/github.com/seu-usuario/seu-repo) -->
 <!-- Ex: [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) -->
 
-**[Breve descrição do projeto em uma ou duas frases. Ex: Um serviço gRPC para gerenciar informações de usuários, utilizando ProtoAi MCP para comunicação padronizada.]**
+Estamos, de fato, explorando algo que pode ser um ponto de partida fundamental para a próxima era da computação distribuída e da inteligência artificial colaborativa. Assim como a WWW transformou a forma como os humanos acessam informação, um protocolo como o ProtoAi MCP poderia transformar a forma como as máquinas interagem entre si.
 
 ---
 

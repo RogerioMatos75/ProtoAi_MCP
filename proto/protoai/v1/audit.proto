@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package protoai.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Serviço de Auditoria para rastreamento de ações no sistema
+service AuditService {
+  // Registra uma nova entrada de auditoria
+  rpc LogAuditEvent (LogAuditEventRequest) returns (LogAuditEventResponse);
+  // Busca entradas de auditoria com base em filtros
+  rpc GetAuditEvents (GetAuditEventsRequest) returns (GetAuditEventsResponse);
+}
+
+// Tipos de eventos de auditoria
+enum AuditEventType {
+  AUDIT_EVENT_TYPE_UNSPECIFIED = 0;
+  AUDIT_EVENT_TYPE_CREATE = 1;
+  AUDIT_EVENT_TYPE_READ = 2;
+  AUDIT_EVENT_TYPE_UPDATE = 3;
+  AUDIT_EVENT_TYPE_DELETE = 4;
+  AUDIT_EVENT_TYPE_LOGIN = 5;
+  AUDIT_EVENT_TYPE_LOGOUT = 6;
+}
+
+// Representa uma entrada de log de auditoria
+message AuditEvent {
+  string event_id = 1;
+  AuditEventType event_type = 2;
+  string user_id = 3;
+  string resource_type = 4;
+  string resource_id = 5;
+  google.protobuf.Timestamp timestamp = 6;
+  string ip_address = 7;
+  map<string, string> metadata = 8;
+  string description = 9;
+  string status = 10;
+}
+
+message LogAuditEventRequest {
+  AuditEvent event = 1;
+}
+
+message LogAuditEventResponse {
+  string event_id = 1;
+}
+
+message GetAuditEventsRequest {
+  string user_id = 1;
+  AuditEventType event_type = 2;
+  string resource_type = 3;
+  google.protobuf.Timestamp start_time = 4;
+  google.protobuf.Timestamp end_time = 5;
+  int32 page_size = 6;
+  string page_token = 7;
+}
+
+message GetAuditEventsResponse {
+  repeated AuditEvent events = 1;
+  string next_page_token = 2;
+}
