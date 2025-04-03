@@ -2,40 +2,71 @@ syntax = "proto3";
 
 package protoai.v1;
 
-option go_package = "gen/proto/protoai/v1";
+import "google/protobuf/timestamp.proto"; // Para timestamps padronizados
 
-// Definições de autenticação
+// auth.proto - Define o protocolo de autenticação para ProtoAi MCP.
+
+// Enum para tipos de métodos de autenticação
+enum AuthMethodType {
+  AUTH_METHOD_TYPE_UNSPECIFIED = 0; // Valor padrão/inválido
+  NONE = 1;                         // Sem autenticação (uso público ou interno confiável)
+  API_KEY = 2;                      // Autenticação via chave de API (header, query param)
+  OAUTH2 = 3;                       // Autenticação via fluxo OAuth2 (requer detalhes adicionais)
+  JWT = 4;                          // Autenticação via JSON Web Token
+  // Outros métodos podem ser adicionados (e.g., mTLS, SAML)
+}
+
+// Detalhes específicos para OAuth2
+message OAuth2Details {
+  string authorization_url = 1;
+  string token_url = 2;
+  repeated string required_scopes = 3;
+  // ... outros campos relevantes do OAuth2
+}
+
+// Detalhes sobre um método de autenticação suportado
+message AuthMethod {
+  AuthMethodType method_type = 1;
+  string description = 2;               // Descrição do método (e.g., "API Key no header 'X-API-Key'")
+  bool mfa_required = 3;                // Indica se MFA é exigido *além* deste método
+  int32 default_token_expiration_seconds = 4; // Tempo de expiração padrão (0 se não expira ou não aplicável)
+  OAuth2Details oauth2_details = 5;     // Detalhes específicos se method_type for OAUTH2
+  // ... outros detalhes específicos por método
+}
+
+// Política de segurança relacionada à autenticação
+message AuthSecurityPolicy {
+  bool encryption_required = 1;         // Se a comunicação para autenticação deve ser criptografada (TLS)
+  repeated string allowed_ip_ranges = 2; // Faixas de IP permitidas para fazer requisições (formato CIDR)
+  repeated string allowed_devices = 3;   // IDs ou fingerprints de dispositivos permitidos (se aplicável)
+  bool enable_auth_logs = 4;            // Se logs de autenticação devem ser gerados
+  bool enable_token_revocation = 5;     // Se o sistema suporta revogação de tokens
+  bool enable_dynamic_access = 6;       // Se permissões podem ser alteradas dinamicamente para um token/sessão
+}
+
+// Estrutura para logs de autenticação (pode estar em audit.proto também)
+message AuthLogEntry {
+  string request_id = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  string identity = 3;          // Identidade tentada (usuário, client_id, etc.)
+  string source_ip = 4;
+  AuthMethodType method_used = 5;
+  bool success = 6;
+  string failure_reason = 7;    // Motivo da falha (se success = false)
+}
+
+// Estrutura para solicitar revogação de token
+message TokenRevocationRequest {
+  string token_identifier = 1;  // Identificador único do token (e.g., JTI para JWT)
+  string user_id = 2;           // Opcional: ID do usuário associado
+  string reason = 3;
+  string revoked_by = 4;        // Quem solicitou (e.g., "admin_system", "user_request")
+}
+
+// Mensagem principal de configuração de autenticação
 message AuthConfig {
-  // Tipos de autenticação suportados
-  enum AuthType {
-    AUTH_TYPE_UNSPECIFIED = 0;
-    AUTH_TYPE_JWT = 1;
-    AUTH_TYPE_API_KEY = 2;
-    AUTH_TYPE_OAUTH2 = 3;
-  }
-
-  AuthType auth_type = 1;
-  TokenConfig token_config = 2;
-  MFAConfig mfa_config = 3;
-}
-
-// Configuração de tokens
-message TokenConfig {
-  int32 expiration_minutes = 1;
-  bool refresh_token_enabled = 2;
-  int32 refresh_token_expiration_days = 3;
-}
-
-// Configuração de autenticação multi-fator
-message MFAConfig {
-  bool enabled = 1;
-  repeated MFAMethod allowed_methods = 2;
-}
-
-// Métodos MFA suportados
-enum MFAMethod {
-  MFA_METHOD_UNSPECIFIED = 0;
-  MFA_METHOD_TOTP = 1;
-  MFA_METHOD_SMS = 2;
-  MFA_METHOD_EMAIL = 3;
+  repeated AuthMethod supported_methods = 1;
+  AuthSecurityPolicy security_policy = 2;
+  // Referência para onde obter credenciais ou iniciar fluxos (e.g., link para portal do dev)
+  string credentials_info_url = 3;
 }

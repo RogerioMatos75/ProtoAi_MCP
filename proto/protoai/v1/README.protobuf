@@ -1,45 +1,89 @@
-# Manifesto Semântico do Serviço ProtoAi MCP
+syntax = "proto3";
 
-## Visão Geral
-Este diretório contém as definições de protocolo que formam o coração do ProtoAi MCP. 
-As interfaces definidas aqui estabelecem o contrato de comunicação entre os diferentes 
-componentes do sistema.
+package protoai.v1;
 
-## Estrutura de Arquivos
+import "google/protobuf/timestamp.proto";
 
-### meu_servico.proto
-Define as mensagens e serviços RPC específicos deste projeto. Este é o arquivo principal 
-que especifica a interface da API.
+// README.protobuf - Manifesto Semântico e de Descoberta para ProtoAi MCP
+// Define a estrutura para descrever APIs de forma legível e descobrível por máquinas.
 
-### auth.proto
-Especifica os métodos de autenticação suportados pelo serviço, incluindo:
-- JWT
-- API Key
-- OAuth2
-- Configurações MFA
-- Políticas de expiração de token
+// Informações básicas e de identificação
+message ProjectInfo {
+  string name = 1;        // Nome canônico do projeto/serviço
+  string version = 2;     // Versão Semântica
+  string description = 3; // Descrição curta para humanos e IAs
+  string repository = 4;  // Link para o repositório de código
+  repeated string tags = 5; // Tags/Keywords para descoberta semântica (e.g., "user_management", "billing", "geospatial")
+  string owner = 6;       // Proprietário/Mantenedor
+  string license = 7;     // Licença de uso (e.g., "MIT", "Apache-2.0")
+}
 
-### permissions.proto
-Implementa o modelo de controle de acesso baseado em papéis (RBAC), definindo:
-- Papéis do sistema
-- Permissões por papel
-- Regras de acesso a recursos
+// Detalhes sobre uma interface de acesso específica (gRPC, REST, WebSocket, etc.)
+message AccessInterface {
+  enum InterfaceType {
+    INTERFACE_TYPE_UNSPECIFIED = 0;
+    GRPC = 1;           // Interface gRPC padrão
+    REST_HTTP = 2;      // Interface REST sobre HTTP/1.1 ou HTTP/2
+    GRAPHQL = 3;        // Interface GraphQL
+    WEBSOCKET = 4;      // Comunicação via WebSockets
+    MESSAGE_QUEUE = 5;  // Interação via Fila (Kafka, RabbitMQ, etc.) - para eventos assíncronos
+  }
 
-### ignore.proto
-Define regras para omissão de dados sensíveis durante:
-- Serialização/Desserialização
-- Logging
-- Exportação de dados
+  InterfaceType type = 1; // Tipo da interface
+  string base_url_or_address = 2; // URL base (REST, GraphQL, WS) ou Endereço:Porta (gRPC) ou Nome da Fila/Tópico
+  string description = 3;       // Descrição da interface
+  string spec_url = 4;          // Link para especificação detalhada (OpenAPI/Swagger for REST, GraphQL Schema URL, .proto files for gRPC)
+  repeated string available_methods_or_operations = 5; // Métodos RPC (gRPC), Paths+Verbs (REST), Queries/Mutations (GraphQL)
+  repeated string available_events = 6; // Eventos publicados (WebSockets, Message Queues)
+  repeated string data_formats = 7; // Formatos de dados suportados especificamente por esta interface (pode sobrescrever o geral)
+  string preferred_protocol_version = 8; // e.g., "HTTP/2", "WebSocket RFC 6455"
+}
 
-## Convenções
-- Todos os arquivos .proto usam sintaxe proto3
-- Campos obrigatórios são indicados em comentários
-- Enums começam com valor 0 como UNSPECIFIED
-- Nomes de serviços são em PascalCase
-- Nomes de campos são em snake_case
+// Informações gerais sobre comunicação
+message CommunicationDetails {
+  repeated AccessInterface access_interfaces = 1; // Lista de todas as formas de acessar o serviço
+  repeated string default_data_formats = 2;      // Formatos padrão suportados (e.g., "protobuf", "json") se não especificado na interface
+}
 
-## Versionamento
-Este serviço segue versionamento semântico:
-- Mudanças breaking alteram o número da versão principal
-- Novas funcionalidades incrementam a versão menor
-- Correções incrementam a versão de patch
+// (SecurityInfo, Documentation, UpdatePolicy, ComplianceProfile - como definidos anteriormente)
+// ... incluir as definições de SecurityInfo, Documentation, UpdatePolicy e ComplianceProfile ...
+message SecurityInfo {
+  bool encryption_required = 1;
+  string auth_reference = 2;            // Referência para auth.proto (e.g., "./auth.proto")
+  string permissions_reference = 3;     // Referência para permissions.proto
+  string ignore_reference = 4;          // Referência para ignore.proto
+  // Poderia adicionar aqui a lista de 'security_policies' mencionada na sua sugestão,
+  // talvez como strings descritivas ou referências a seções do auth/permissions.proto
+  repeated string high_level_security_policies = 5; // e.g., "Requires JWT Bearer Token", "Role-Based Access Control enforced"
+}
+
+message Documentation {
+  string human_readme_link = 1;
+  string api_reference_link = 2;
+  string contact_email = 3;
+}
+
+message UpdatePolicy {
+  string versioning_scheme = 1;
+  string changelog_link = 2;
+  string update_check_endpoint = 3;
+}
+
+// Vamos assumir que ComplianceProfile foi definido em compliance.proto
+// e aqui apenas o referenciamos ou incluímos diretamente.
+message ComplianceReference {
+  string compliance_proto_reference = 1; // e.g., "./compliance.proto"
+  // Ou incluir a mensagem ComplianceProfile diretamente:
+  // ComplianceProfile compliance_profile = 2;
+}
+
+
+// Mensagem principal ReadmeProto atualizada
+message ReadmeProto {
+  ProjectInfo project_info = 1;
+  CommunicationDetails communication_details = 2; // Contém os detalhes de acesso/endpoints
+  SecurityInfo security_info = 3;
+  Documentation documentation = 4;
+  UpdatePolicy update_policy = 5;
+  ComplianceReference compliance_ref = 6; // Referência ou inclusão do perfil de compliance
+}

@@ -73,6 +73,21 @@ As definições formais do ProtoAi MCP implementadas neste projeto residem no di
 5.  **`ignore.proto`**: ([Link para o arquivo `ignore.proto` no seu repo])
     *   **Propósito:** Funciona como um `.gitignore` para a comunicação. Define quais campos, mensagens ou serviços específicos devem ser omitidos ou filtrados durante a serialização/desserialização ou na lógica da API para evitar vazamento de dados sensíveis ou exposição de detalhes internos.
 
+6.  **`compliance.proto`**: ([Link para o arquivo `compliance.proto` no seu repo])
+    *   **Propósito:** Declara a postura de conformidade deste serviço em relação a regulamentações de privacidade (como GDPR, LGPD) e padrões de segurança (como ISO 27001). Fornece transparência sobre governança de dados e certificações relevantes.
+
+## 🛡️ Conformidade e Segurança (Compliance)
+
+Este serviço foi desenvolvido com [mencione os princípios de segurança/privacidade adotados, e.g., Privacy by Design]. Nossa postura detalhada de conformidade com regulamentações e padrões de segurança está declarada no arquivo [compliance.proto](./proto/protoai/v1/compliance.proto).
+
+**Resumo da Postura:**
+*   **GDPR:** [Declarar status resumido - e.g., Compatível, Em Progresso, Não Aplicável]
+*   **LGPD:** [Declarar status resumido]
+*   **ISO 27001:** [Declarar status resumido - e.g., Certificado, Não Aplicável]
+*   **Regiões de Processamento:** [Listar regiões principais - e.g., UE, Brasil]
+
+Para detalhes completos, incluindo informações sobre auditorias, certificações e políticas, consulte o arquivo `compliance.proto`. A segurança da comunicação é reforçada pelas diretrizes definidas em `auth.proto` e `ignore.proto`.
+
 **Importante:** Os arquivos `.proto` são a **fonte da verdade** para a interface e as regras de comunicação. O código Go/Python/etc. é gerado a partir deles.
 
 ---
@@ -102,7 +117,7 @@ Siga estas instruções para obter uma cópia do projeto e executá-lo localment
     go mod download
 
     # Exemplo para Node.js
-    # npm install
+    npm install
     ```
 
 ### Gerando Código Protobuf
@@ -120,8 +135,7 @@ Antes de construir ou executar o serviço, você precisa gerar o código a parti
 # protoc --go_out=./gen/proto --go_opt=paths=source_relative \
 #        --go-grpc_out=./gen/proto --go-grpc_opt=paths=source_relative \
 #        proto/protoai/v1/*.proto proto/protoai/v1/seu_servico.proto
-Use code with caution.
-Markdown
+
 Isso criará/atualizará os arquivos necessários no diretório [caminho/para/codigo/gerado - ex: ./gen/proto]. Não edite esses arquivos manualmente.
 
 💻 Uso
@@ -130,9 +144,9 @@ Executando o Serviço
 go run ./cmd/server/main.go
 
 # Exemplo usando Make
-# make run
-Use code with caution.
-Bash
+make run
+
+```bash
 O serviço estará disponível em [endereço:porta - ex: localhost:50051]. Consulte os logs para mais informações.
 
 Exemplos de Requisição <!-- (Opcional) -->
@@ -143,8 +157,8 @@ Exemplos de Requisição <!-- (Opcional) -->
 #   -H "Authorization: Bearer [SEU_TOKEN_JWT]" \
 #   -d '{"user_id": "123"}' \
 #   localhost:50051 protoai.v1.SeuServico/GetUserDetails
-Use code with caution.
-Bash
+```bash
+
 🔧 Configuração
 O serviço pode ser configurado através de:
 
@@ -171,9 +185,9 @@ Para executar os testes unitários e de integração:
 go test ./...
 
 # Exemplo usando Make
-# make test
-Use code with caution.
-Bash
+make test
+
+```bash
 [Mencione se é necessário algum setup adicional para testes, como um banco de dados de teste.]
 
 🤝 Contribuindo <!-- (Opcional) -->

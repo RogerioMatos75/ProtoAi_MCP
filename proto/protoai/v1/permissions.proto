@@ -2,41 +2,78 @@ syntax = "proto3";
 
 package protoai.v1;
 
-option go_package = "gen/proto/protoai/v1";
+// permissions.proto - Define o sistema de controle de acesso e permissões para ProtoAi MCP.
 
-// Definição de permissões e controle de acesso
-message PermissionsConfig {
-  repeated Role roles = 1;
-  repeated Permission permissions = 2;
-}
-
-// Definição de papel (role)
-message Role {
-  string name = 1;
-  string description = 2;
-  repeated string permissions = 3;
-}
-
-// Definição de permissão
+// Define uma permissão com estrutura clara
 message Permission {
-  string name = 1;
-  string description = 2;
-  string resource = 3;
-  repeated string actions = 4;
+  string name = 1;                    // Nome único da permissão (e.g., "users:read")
+  string description = 2;              // Descrição detalhada da permissão
+  string resource_type = 3;            // Tipo de recurso (e.g., "users", "data")
+  string action = 4;                   // Ação permitida (e.g., "read", "write")
 }
 
-// Ações possíveis em recursos
-enum Action {
-  ACTION_UNSPECIFIED = 0;
-  ACTION_READ = 1;
-  ACTION_WRITE = 2;
-  ACTION_DELETE = 3;
-  ACTION_ADMIN = 4;
+// Define um Papel (Role)
+message Role {
+  string name = 1;                    // Nome único do papel (e.g., "admin")
+  string description = 2;              // Descrição detalhada do papel
+  repeated Permission permissions = 3; // Lista de permissões concedidas por este papel
 }
 
-// Regra de acesso
-message AccessRule {
-  string resource = 1;
-  repeated Action required_actions = 2;
-  repeated string required_roles = 3;
+// Lógica de avaliação de permissões
+enum PermissionLogic {
+  PERMISSION_LOGIC_UNSPECIFIED = 0;
+  PERMISSION_LOGIC_AND = 1;           // Todas as permissões são necessárias
+  PERMISSION_LOGIC_OR = 2;            // Qualquer uma das permissões é suficiente
+}
+
+// Condições baseadas em atributos (ABAC)
+message AttributeCondition {
+  string attribute = 1;               // Nome do atributo (e.g., "department", "location")
+  oneof condition {
+    string equals = 2;               // Valor exato
+    string contains = 3;              // Contém valor
+    string starts_with = 4;           // Começa com valor
+    string ends_with = 5;             // Termina com valor
+    bool is_empty = 6;                // Está vazio
+    repeated string in_list = 7;      // Valor está na lista
+    string regex_match = 8;           // Corresponde ao padrão regex
+  }
+}
+
+// Atribuição de permissões a usuários
+message UserPermissionsAssignment {
+  string user_id = 1;                // ID do usuário
+  repeated string role_names = 2;     // Papéis atribuídos ao usuário
+  repeated Permission direct_permissions = 3; // Permissões atribuídas diretamente
+  repeated AttributeCondition attribute_conditions = 4; // Condições ABAC específicas do usuário
+}
+
+// Requisitos de permissão para endpoints
+message EndpointPermissionRequirements {
+  string endpoint_path = 1;           // Caminho do endpoint (e.g., "/api/v1/users")
+  string method = 2;                  // Método HTTP (e.g., "GET", "POST")
+  repeated string required_roles = 3;  // Papéis necessários
+  repeated Permission required_permissions = 4; // Permissões necessárias
+  PermissionLogic logic = 5;          // Lógica de avaliação (AND/OR)
+  repeated AttributeCondition attribute_conditions = 6; // Condições ABAC
+}
+
+// Informações detalhadas de gerenciamento de políticas
+message PolicyManagementInfo {
+  string url = 1;                     // URL do sistema de gerenciamento
+  string description = 2;             // Descrição do sistema de políticas
+  string version = 3;                 // Versão da política
+  string last_updated = 4;            // Última atualização (timestamp RFC3339)
+  string updated_by = 5;              // Responsável pela última atualização
+  repeated string admins = 6;         // Administradores do sistema
+  map<string, string> metadata = 7;   // Metadados adicionais
+}
+
+// Mensagem principal de configuração de permissões
+message PermissionsConfig {
+  repeated Permission defined_permissions = 1; // Lista de todas as permissões
+  repeated Role defined_roles = 2;            // Lista de todos os papéis
+  repeated UserPermissionsAssignment user_assignments = 3; // Atribuições de usuário
+  repeated EndpointPermissionRequirements endpoint_requirements = 4; // Requisitos de endpoint
+  PolicyManagementInfo policy_management_info = 5; // Informações de gerenciamento
 }

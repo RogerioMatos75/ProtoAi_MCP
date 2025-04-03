@@ -2,44 +2,102 @@ syntax = "proto3";
 
 package protoai.v1;
 
-option go_package = "gen/proto/protoai/v1";
+// ignore.proto - Define regras de exclusão para comunicação segura dentro do ProtoAi MCP.
+// Impede que certos campos, métodos ou serviços sejam expostos ou serializados.
 
-// Regras de exclusão para campos sensíveis
-message IgnoreRules {
-  repeated FieldIgnoreRule field_rules = 1;
-  repeated MessageIgnoreRule message_rules = 2;
-  repeated ServiceIgnoreRule service_rules = 3;
-}
-
-// Regra de exclusão para campos específicos
-message FieldIgnoreRule {
-  string field_name = 1;
-  string message_type = 2;
-  IgnoreType ignore_type = 3;
-  string description = 4;
-}
-
-// Regra de exclusão para mensagens inteiras
-message MessageIgnoreRule {
-  string message_name = 1;
-  IgnoreType ignore_type = 2;
-  string description = 3;
-}
-
-// Regra de exclusão para serviços
-message ServiceIgnoreRule {
+// Contexto específico onde a regra deve ser aplicada
+message IgnoreContext {
+  // Nome do serviço específico
   string service_name = 1;
-  repeated string method_names = 2;
-  IgnoreType ignore_type = 3;
-  string description = 4;
+  
+  // Nome do método específico
+  string method_name = 2;
+  
+  // Tipo de operação
+  repeated OperationType operations = 3;
+  
+  // Tags ou labels adicionais para categorização
+  map<string, string> labels = 4;
 }
 
-// Tipos de exclusão
-enum IgnoreType {
-  IGNORE_TYPE_UNSPECIFIED = 0;
-  IGNORE_TYPE_SERIALIZE = 1;    // Ignorar durante serialização
-  IGNORE_TYPE_DESERIALIZE = 2;  // Ignorar durante desserialização
-  IGNORE_TYPE_BOTH = 3;         // Ignorar em ambos os casos
-  IGNORE_TYPE_LOG = 4;          // Ignorar em logs
-  IGNORE_TYPE_EXPORT = 5;       // Ignorar em exportações
+// Tipos de operação onde a regra pode ser aplicada
+enum OperationType {
+  OPERATION_TYPE_UNSPECIFIED = 0;
+  OPERATION_TYPE_READ = 1;
+  OPERATION_TYPE_WRITE = 2;
+  OPERATION_TYPE_UPDATE = 3;
+  OPERATION_TYPE_DELETE = 4;
+}
+
+// Regra complexa que define condições para ignorar campos
+message ComplexRule {
+  // Campo, serviço ou método a ser ignorado
+  string target_name = 1;
+  
+  // Tipo do alvo (campo, serviço ou método)
+  TargetType target_type = 2;
+  
+  // Contexto onde a regra se aplica
+  IgnoreContext context = 3;
+  
+  // Condições adicionais para aplicar a regra
+  RuleConditions conditions = 4;
+  
+  // Se verdadeiro, inverte a lógica da regra
+  bool negate = 5;
+  
+  // Prioridade da regra (maior número = maior prioridade)
+  int32 priority = 6;
+  
+  // Descrição da regra para documentação
+  string description = 7;
+}
+
+// Tipo do alvo da regra
+enum TargetType {
+  TARGET_TYPE_UNSPECIFIED = 0;
+  TARGET_TYPE_FIELD = 1;
+  TARGET_TYPE_SERVICE = 2;
+  TARGET_TYPE_METHOD = 3;
+}
+
+// Condições adicionais para aplicar a regra
+message RuleConditions {
+  // Expressão de condição em formato string
+  string condition_expression = 1;
+  
+  // Valor do campo deve corresponder a um destes valores
+  repeated string match_values = 2;
+  
+  // Aplicar regra apenas se o campo tiver um valor específico
+  ValueCondition value_condition = 3;
+}
+
+// Condição baseada no valor do campo
+message ValueCondition {
+  oneof condition {
+    string equals = 1;
+    string contains = 2;
+    string starts_with = 3;
+    string ends_with = 4;
+    bool is_empty = 5;
+    bool is_null = 6;
+    repeated string in_list = 7;
+    string regex_match = 8;
+  }
+}
+
+// Mensagem principal de configuração
+message IgnoreConfig {
+  // Lista de regras complexas que definem todas as exclusões
+  repeated ComplexRule complex_rules = 1;
+  
+  // Versão da configuração
+  string version = 2;
+  
+  // Última atualização (timestamp RFC3339)
+  string last_updated = 3;
+  
+  // Responsável pela última atualização
+  string updated_by = 4;
 }

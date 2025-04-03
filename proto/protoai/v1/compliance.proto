@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package protoai.v1;
+
+import "google/protobuf/timestamp.proto"; // Para datas de validade ou auditoria
+
+// compliance.proto - Define uma estrutura para declarar posturas de compliance e certificações
+// associadas a um serviço que utiliza ProtoAi MCP.
+
+// Enum para status de conformidade ou certificação
+enum ComplianceStatus {
+  COMPLIANCE_STATUS_UNSPECIFIED = 0; // Status não definido
+  COMPLIANT_CERTIFIED = 1;         // Totalmente conforme ou certificado
+  IN_PROGRESS = 2;                 // Em processo de adequação ou certificação
+  NOT_APPLICABLE = 3;              // Regulamentação ou certificação não se aplica ao serviço
+  ASSESSED_NOT_COMPLIANT = 4;      // Avaliado e encontrado não conforme (raro declarar, mas possível)
+  SELF_ASSESSED = 5;               // Auto-avaliação de conformidade (sem certificação externa)
+}
+
+// Detalhes específicos para uma regulamentação ou padrão
+message ComplianceDetail {
+  ComplianceStatus status = 1;
+  string standard_name = 2;               // Nome da norma (e.g., "GDPR", "ISO/IEC 27001:2013", "LGPD")
+  string description_or_scope = 3;        // Breve descrição ou escopo da aplicabilidade/certificação
+  string certificate_identifier_or_link = 4; // Nº do certificado, link para selo/registro (se aplicável)
+  google.protobuf.Timestamp expiry_date = 5; // Data de expiração da certificação (se aplicável)
+  google.protobuf.Timestamp last_assessment_date = 6; // Data da última avaliação/auditoria
+  string assessment_body = 7;             // Órgão certificador ou auditor (se aplicável, e.g., "Bureau Veritas", "Internal Audit")
+}
+
+// Mensagem principal descrevendo o perfil de compliance do serviço.
+message ComplianceProfile {
+  // Declarações sobre regulamentações de privacidade de dados
+  ComplianceDetail gdpr_status = 1;       // General Data Protection Regulation (EU)
+  ComplianceDetail lgpd_status = 2;       // Lei Geral de Proteção de Dados (Brasil)
+  ComplianceDetail ccpa_status = 3;       // California Consumer Privacy Act
+  // Adicionar outros relevantes como HIPAA, etc.
+
+  // Declarações sobre padrões de segurança da informação
+  ComplianceDetail iso_27001_status = 10; // ISO/IEC 27001 (Segurança da Informação)
+  ComplianceDetail soc2_status = 11;      // SOC 2 (Type 1 ou Type 2)
+  ComplianceDetail pci_dss_status = 12;   // PCI DSS (Cartões de Pagamento)
+  // Adicionar outros relevantes
+
+  // Informações gerais de governança de dados
+  repeated string data_processing_regions = 20; // Regiões onde os dados são processados/armazenados (e.g., "EU", "US-East")
+  string privacy_policy_url = 21;            // Link para a política de privacidade pública
+  string dpo_contact_info = 22;              // Informação de contato do Data Protection Officer (se aplicável)
+
+  // Versão e atualização deste perfil de compliance
+  google.protobuf.Timestamp profile_last_updated = 30;
+  string comments = 31; // Comentários adicionais sobre a postura de compliance
+}
