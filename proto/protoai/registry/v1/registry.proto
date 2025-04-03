@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package protoai.registry.v1;
+
+import "google/protobuf/timestamp.proto";
+import "protoai/v1/readme.proto";
+
+// ProtoAiRegistry é um serviço central para registro e descoberta de APIs
+// Permite que desenvolvedores registrem suas APIs, gerenciem versões e
+// facilita a descoberta de APIs disponíveis na plataforma.
+service ProtoAiRegistry {
+  // RegisterService registra um novo serviço no registry
+  // Permite que desenvolvedores registrem suas APIs fornecendo um manifesto detalhado
+  // O manifesto inclui informações como nome, versão, endpoints e documentação
+  rpc RegisterService(RegisterServiceRequest) returns (RegisterServiceResponse) {}
+  
+  // UnregisterService remove um serviço do registry
+  // Permite que desenvolvedores removam suas APIs quando necessário
+  // Requer autenticação para garantir que apenas o proprietário possa remover o serviço
+  rpc UnregisterService(UnregisterServiceRequest) returns (UnregisterServiceResponse) {}
+  
+  // GetService recupera informações detalhadas de um serviço específico
+  // Retorna o manifesto completo do serviço, incluindo endpoints e documentação
+  // Útil para clientes que precisam integrar com uma API específica
+  rpc GetService(GetServiceRequest) returns (GetServiceResponse) {}
+  
+  // ListServices retorna todos os serviços registrados
+  // Suporta paginação para lidar com grande número de serviços
+  // Útil para visualizar o catálogo completo de APIs disponíveis
+  rpc ListServices(ListServicesRequest) returns (ListServicesResponse) {}
+  
+  // SearchServices permite buscar serviços com base em critérios específicos
+  // Suporta busca por tags, padrões de nome e descrição
+  // Facilita a descoberta de APIs relevantes para necessidades específicas
+  rpc SearchServices(SearchServicesRequest) returns (SearchServicesResponse) {}
+}
+
+// RegisterServiceRequest contém o manifesto do serviço a ser registrado
+// O manifesto (ReadmeProto) inclui todas as informações necessárias sobre a API
+message RegisterServiceRequest {
+  protoai.v1.ReadmeProto service_manifest = 1;
+}
+
+// RegisterServiceResponse contém o ID único atribuído ao serviço registrado
+// e o timestamp do registro para rastreabilidade
+message RegisterServiceResponse {
+  string service_id = 1;
+  google.protobuf.Timestamp registration_time = 2;
+}
+
+// UnregisterServiceRequest identifica o serviço a ser removido do registry
+// Requer o ID único do serviço para garantir remoção precisa
+message UnregisterServiceRequest {
+  string service_id = 1;
+}
+
+// UnregisterServiceResponse indica o resultado da operação de remoção
+// Confirma se a operação foi bem-sucedida
+message UnregisterServiceResponse {
+  bool success = 1;
+}
+
+// GetServiceRequest especifica qual serviço recuperar usando seu ID único
+// Permite acesso direto a um serviço específico
+message GetServiceRequest {
+  string service_id = 1;
+}
+
+// GetServiceResponse retorna o manifesto completo do serviço solicitado
+// Inclui timestamp da última atualização para controle de versão
+message GetServiceResponse {
+  protoai.v1.ReadmeProto service_manifest = 1;
+  google.protobuf.Timestamp last_updated = 2;
+}
+
+// ListServicesRequest suporta paginação para listar serviços
+// Permite controle sobre quantidade de resultados por página
+message ListServicesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+// ListServicesResponse retorna uma lista paginada de serviços
+// Inclui token para próxima página quando há mais resultados
+message ListServicesResponse {
+  repeated protoai.v1.ReadmeProto services = 1;
+  string next_page_token = 2;
+}
+
+// SearchServicesRequest define critérios para busca de serviços
+// Permite busca por tags, padrões de nome e descrição
+message SearchServicesRequest {
+  repeated string tags = 1;
+  string name_pattern = 2;
+  string description_pattern = 3;
+}
+
+// SearchServicesResponse retorna os serviços que correspondem aos critérios
+// Lista todos os serviços que atendem aos filtros de busca
+message SearchServicesResponse {
+  repeated protoai.v1.ReadmeProto matching_services = 1;
+}
