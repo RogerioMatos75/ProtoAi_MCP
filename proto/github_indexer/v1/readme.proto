@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package protoai.github_indexer.v1;
+
+// Mensagem para representar informações do projeto
+message ProjectInfo {
+  string name = 1;
+  string version = 2;
+  string description = 3;
+  string repository = 4;
+}
+
+// Mensagem para representar detalhes dos endpoints da API
+message ApiEndpoints {
+  repeated string available_methods = 1;
+  string base_url = 2;
+}
+
+// Mensagem para representar detalhes de comunicação
+message CommunicationDetails {
+  repeated string default_data_formats = 1;
+}
+
+// Mensagem para representar informações de segurança
+message SecurityInfo {
+  bool encryption_required = 1;
+  string auth_reference = 2;
+  string permissions_reference = 3;
+  string ignore_reference = 4;
+  repeated string high_level_security_policies = 5;
+}
+
+// Mensagem para representar documentação
+message Documentation {
+  string human_readme_link = 1;
+  string api_reference_link = 2;
+  string contact_email = 3;
+}
+
+// Mensagem para representar política de atualização
+message UpdatePolicy {
+  string versioning_scheme = 1;
+}
+
+// Mensagem para representar referência de conformidade
+message ComplianceRef {
+  string compliance_proto_reference = 1;
+}
+
+// Mensagem principal que representa o manifesto da API
+message ReadmeProto {
+  ProjectInfo project_info = 1;
+  ApiEndpoints api_endpoints = 2;
+  CommunicationDetails communication_details = 3;
+  SecurityInfo security_info = 4;
+  Documentation documentation = 5;
+  UpdatePolicy update_policy = 6;
+  ComplianceRef compliance_ref = 7;
+}
