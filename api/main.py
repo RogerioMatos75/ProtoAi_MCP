@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from google.protobuf import timestamp_pb2
@@ -17,6 +18,15 @@ app = FastAPI(
     title="ProtoAi MCP API",
     description="API para acesso ao manifesto semântico e descoberta do ProtoAi MCP",
     version="1.0.0"
+)
+
+# Configuração do CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas as origens em ambiente de desenvolvimento
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos
+    allow_headers=["*"],  # Permite todos os headers
 )
 
 # Modelos Pydantic que refletem a estrutura do README.protobuf

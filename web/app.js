@@ -1,5 +1,5 @@
 // Configuração da API
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://localhost:8080';
 
 // Elementos do DOM
 const manifestoBtn = document.getElementById('manifestoBtn');
@@ -13,7 +13,7 @@ const resultsContainer = document.getElementById('results');
 // Função para carregar o manifesto
 async function loadManifesto() {
     try {
-        const response = await fetch(`${API_BASE_URL}/manifesto`);
+        const response = await fetch(`${API_BASE_URL}/protoai/readme.protobuf`);
         const data = await response.json();
         const manifestoText = JSON.stringify(data, null, 2);
         manifestoContent.querySelector('pre').textContent = manifestoText;

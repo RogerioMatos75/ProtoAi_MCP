@@ -6,6 +6,7 @@
     <title>ProtoAi MCP - Dashboard</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./icon.svg">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .card {
@@ -35,10 +36,10 @@
         <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 <input type="text" id="searchInput" placeholder="Buscar repositórios..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <select id="tagFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select id="tagFilter" title="Filtrar por tags" aria-label="Filtrar por tags" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Todas as Tags</option>
                 </select>
-                <select id="ownerFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select id="ownerFilter" title="Filtrar por proprietários" aria-label="Filtrar por proprietários" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Todos os Proprietários</option>
                 </select>
             </div>
