@@ -12,23 +12,23 @@ Estamos, de fato, explorando algo que pode ser um ponto de partida fundamental p
 
 ## 📝 Sumário
 
-*   [Visão Geral](#-visão-geral)
-*   [Integração com ProtoAi MCP](#-integração-com-protoai-mcp)
-    *   [O que é ProtoAi MCP?](#o-que-é-protoai-mcp)
-    *   [Por que usamos ProtoAi MCP neste projeto?](#por-que-usamos-protoai-mcp-neste-projeto)
-    *   [Componentes Utilizados](#componentes-utilizados)
-*   [🚀 Começando](#-começando)
-    *   [Pré-requisitos](#pré-requisitos)
-    *   [Instalação](#instalação)
-    *   [Gerando Código Protobuf](#gerando-código-protobuf)
-*   [💻 Uso](#-uso)
-    *   [Executando o Serviço](#executando-o-serviço)
-    *   [Exemplos de Requisição](#exemplos-de-requisição) <!-- (Opcional) -->
-*   [🔧 Configuração](#-configuração)
-*   [🧪 Testes](#-testes)
-*   [🤝 Contribuindo](#-contribuindo) <!-- (Opcional) -->
-*   [📜 Licença](#-licença)
-*   [📞 Contato](#-contato) <!-- (Opcional) -->
+- [ProtoAi\_MCP](#protoai_mcp)
+  - [📝 Sumário](#-sumário)
+  - [📖 Visão Geral](#-visão-geral)
+  - [✨ Integração com ProtoAi MCP](#-integração-com-protoai-mcp)
+    - [O que é ProtoAi MCP?](#o-que-é-protoai-mcp)
+    - [Por que usamos ProtoAi MCP neste projeto?](#por-que-usamos-protoai-mcp-neste-projeto)
+    - [Componentes Utilizados](#componentes-utilizados)
+  - [🛡️ Conformidade e Segurança (Compliance)](#️-conformidade-e-segurança-compliance)
+  - [🚀 Começando](#-começando)
+    - [Pré-requisitos](#pré-requisitos)
+    - [Instalação](#instalação)
+    - [Gerando Código Protobuf](#gerando-código-protobuf)
+      - [2. /search](#2-search)
+    - [Testes com Ngrok](#testes-com-ngrok)
+    - [Testes Automatizados](#testes-automatizados)
+- [Exemplo para Go](#exemplo-para-go)
+- [Exemplo usando Make](#exemplo-usando-make)
 
 ---
 
@@ -179,6 +179,80 @@ JWT_SECRET: Segredo para assinatura/verificação de tokens JWT
 [Outras variáveis relevantes]
 
 🧪 Testes
+
+### Endpoints Disponíveis
+
+#### 1. /protoai/readme.protobuf
+Este endpoint retorna o manifesto semântico do serviço em formato protobuf.
+
+**Parâmetros:**
+- Não requer parâmetros
+
+**Exemplo de Resposta:**
+```json
+{
+  "name": "ProtoAi_MCP",
+  "version": "v1",
+  "description": "Machine Communication Protocol for AI Services"
+}
+```
+
+#### 2. /search
+Realiza buscas nos repositórios indexados.
+
+**Parâmetros:**
+- `query` (string): Termo de busca para filtrar os resultados
+- `tags` (array): Lista de tags para filtrar os resultados
+
+**Exemplo de Requisição:**
+```json
+{
+  "query": "machine learning",
+  "tags": ["ai", "ml"]
+}
+```
+
+**Exemplo de Resposta:**
+```json
+{
+  "results": [
+    {
+      "repository": "example/repo",
+      "description": "Machine learning implementation",
+      "tags": ["ai", "ml"],
+      "score": 0.95
+    }
+  ]
+}
+```
+
+### Testes com Ngrok
+Para testar a API externamente, utilizamos o Ngrok para criar um túnel seguro. Isso permite que a API seja acessível através da internet durante os testes.
+
+1. Inicie o servidor local:
+```bash
+python api/main.py
+```
+
+2. Em outro terminal, inicie o túnel Ngrok:
+```bash
+ngrok http 8000
+```
+
+O Ngrok fornecerá uma URL pública (ex: https://your-tunnel.ngrok.io) que redireciona para seu servidor local.
+
+Exemplos de requisições usando a URL do Ngrok:
+```bash
+# Acessar o manifesto semântico
+curl https://your-tunnel.ngrok.io/protoai/readme.protobuf
+
+# Realizar uma busca
+curl -X POST https://your-tunnel.ngrok.io/search \
+  -H "Content-Type: application/json" \
+  -d '{"query":"machine learning","tags":["ai","ml"]}'
+```
+
+### Testes Automatizados
 Para executar os testes unitários e de integração:
 
 # Exemplo para Go
