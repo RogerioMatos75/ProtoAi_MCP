@@ -1,28 +1,13 @@
 // Configuração da API
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'http://localhost:8000';
 
 // Elementos do DOM
-const manifestoBtn = document.getElementById('manifestoBtn');
-const manifestoContent = document.getElementById('manifestoContent');
 const searchInput = document.getElementById('searchInput');
 const tagFilter = document.getElementById('tagFilter');
 const ownerFilter = document.getElementById('ownerFilter');
 const searchBtn = document.getElementById('searchBtn');
-const resultsContainer = document.getElementById('results');
 
-// Função para carregar o manifesto
-async function loadManifesto() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/protoai/readme.protobuf`);
-        const data = await response.json();
-        const manifestoText = JSON.stringify(data, null, 2);
-        manifestoContent.querySelector('pre').textContent = manifestoText;
-        manifestoContent.classList.toggle('hidden');
-    } catch (error) {
-        console.error('Erro ao carregar manifesto:', error);
-        alert('Erro ao carregar o manifesto. Por favor, tente novamente.');
-    }
-}
+const resultsContainer = document.getElementById('results');
 
 // Função para realizar a busca
 async function searchRepositories() {
@@ -31,14 +16,28 @@ async function searchRepositories() {
         const tag = tagFilter.value;
         const owner = ownerFilter.value;
 
-        const params = new URLSearchParams();
-        if (searchTerm) params.append('q', searchTerm);
-        if (tag) params.append('tag', tag);
-        if (owner) params.append('owner', owner);
+        const searchParams = {};
+        if (searchTerm) searchParams.q = searchTerm;
+        if (tag) searchParams.tag = tag;
+        if (owner) searchParams.owner = owner;
 
-        const response = await fetch(`${API_BASE_URL}/search?${params.toString()}`);
+        const intentPayload = {
+            action: "BUSCAR",
+            scope: "repositories",
+            parameters: searchParams,
+            response_format: "json"
+        };
+
+        const response = await fetch(`${API_BASE_URL}/intent`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(intentPayload)
+        });
+
         const data = await response.json();
-        displayResults(data);
+        displayResults(data.resultado_busca || []);
     } catch (error) {
         console.error('Erro na busca:', error);
         alert('Erro ao realizar a busca. Por favor, tente novamente.');
@@ -83,20 +82,15 @@ function displayResults(repositories) {
     });
 }
 
+
+
 // Event Listeners
-manifestoBtn.addEventListener('click', loadManifesto);
 searchBtn.addEventListener('click', searchRepositories);
 
-// Carregar filtros iniciais (simulado por enquanto)
-const mockTags = ['API', 'Frontend', 'Backend', 'Database', 'Testing'];
-const mockOwners = ['user1', 'user2', 'organization1'];
 
-mockTags.forEach(tag => {
-    const option = new Option(tag, tag);
-    tagFilter.add(option);
-});
-
-mockOwners.forEach(owner => {
-    const option = new Option(owner, owner);
-    ownerFilter.add(option);
+// Adicionar event listener para busca ao pressionar Enter
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        searchRepositories();
+    }
 });

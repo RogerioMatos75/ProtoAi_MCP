@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/ProtoAi_MCP/',
+  base: './',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -12,6 +12,13 @@ export default defineConfig({
     }
   },
   server: {
-    port: 3000
+    port: 5173,
+    proxy: {
+      '/intent': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   }
 })

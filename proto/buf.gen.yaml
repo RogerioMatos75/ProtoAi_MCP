@@ -22,3 +22,8 @@ plugins:
     opt:
       - paths=source_relative
       - generate_unbound_methods=true
+  # Geração de código Python
+  - plugin: python
+    out: ../peup/proto
+    opt:
+      - paths=source_relative

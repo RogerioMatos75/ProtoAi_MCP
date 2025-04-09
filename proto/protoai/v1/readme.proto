@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package protoai.v1;
+
+message ProjectInfo {
+    string name = 1;
+    string version = 2;
+    string description = 3;
+    repeated string tags = 4;
+}
+
+message AccessInterface {
+    enum IfType {
+        UNDEFINED = 0;
+        REST_HTTP = 1;
+    }
+    IfType type = 1;
+    string base_url_or_address = 2;
+    repeated string available_methods_or_operations = 3;
+}
+
+message CommunicationDetails {
+    repeated AccessInterface access_interfaces = 1;
+    repeated string default_data_formats = 2;
+}
+
+message SecurityInfo {
+    bool encryption_required = 1;
+}
+
+message MonetizationInfo {
+    enum ModelType {
+        MODEL_TYPE_UNSPECIFIED = 0;
+        FREE = 1;                // Totalmente gratuito
+        PAY_PER_USE = 2;         // Pagamento por chamada/uso
+        SUBSCRIPTION = 3;        // Assinatura periódica para acesso
+        HYBRID = 4;              // Combinação (ex: N chamadas grátis, depois pago)
+    }
+
+    ModelType model = 1;         // Modelo de precificação
+    string price_details = 2;    // Pode ser um valor (pay_per_use) ou ID do plano (subscription)
+    string currency = 3;         // Moeda (ISO 4217 - e.g., "USD", "BRL", "EUR") ou "credits"
+    string pricing_page_url = 4; // Link para a página com detalhes completos de preço/planos
+    bool commission_enabled = 5; // Se o serviço paga comissão por referências/uso via PEUP
+    string commission_details_url = 6; // Link para detalhes da política de comissão
+}
+
+message LicensingInfo {
+    string license_key = 1;      // Chave/SPDX ID da licença (e.g., "MIT", "Apache-2.0")
+    string license_url = 2;      // Link para o texto completo da licença
+}
+
+message ReadmeProto {
+    string intent = 1;
+    ProjectInfo project_info = 2;
+    CommunicationDetails communication_details = 3;
+    SecurityInfo security_info = 4;
+    MonetizationInfo monetization_info = 5;
+    LicensingInfo licensing_info = 6;
+}
