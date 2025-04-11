@@ -1,0 +1,58 @@
+# Dependências
+node_modules/
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Arquivos de configuração com dados sensíveis
+.env
+.env.local
+.env.*.local
+config/*
+!config/example.config.json
+!config/init.sql
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Arquivos de build
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Arquivos de IDE/editores
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.bak
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos temporários
+tmp/
+temp/
+*.tmp
+
+# Arquivos de cache
+.cache/
+.pytest_cache/
+coverage/
+
+# Banco de dados local
+*.sqlite
+*.db
+
+# Chaves e certificados
+*.pem
+*.key
+*.crt

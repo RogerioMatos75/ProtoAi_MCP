@@ -2,22 +2,67 @@ syntax = "proto3";
 
 package protoai.v1;
 
+import "google/protobuf/timestamp.proto";
+import "protoai/v1/readme.proto";
+
 option go_package = "gen/proto/protoai/v1";
 
-// Serviço principal que define as operações disponíveis
-service MeuServico {
-  // Exemplo de um método RPC
-  rpc ExemploOperacao (ExemploRequest) returns (ExemploResponse);
+// Serviço principal do MCP que gerencia a comunicação semântica
+service MCPService {
+  // Registra um novo modelo de IA ou API
+  rpc RegisterModel (RegisterModelRequest) returns (RegisterModelResponse);
+  
+  // Busca modelos compatíveis com uma intenção específica
+  rpc DiscoverModels (DiscoveryRequest) returns (DiscoveryResponse);
+  
+  // Estabelece uma conexão semântica entre dois modelos
+  rpc EstablishConnection (ConnectionRequest) returns (ConnectionResponse);
 }
 
-// Mensagem de requisição de exemplo
-message ExemploRequest {
-  string nome = 1;
-  int32 idade = 2;
+// Requisição para registrar um novo modelo
+message RegisterModelRequest {
+  ReadmeProto manifest = 1;  // Manifesto do modelo
+  repeated string capabilities = 2;  // Lista de capacidades do modelo
+  map<string, string> metadata = 3;  // Metadados adicionais
 }
 
-// Mensagem de resposta de exemplo
-message ExemploResponse {
-  string mensagem = 1;
-  bool sucesso = 2;
+message RegisterModelResponse {
+  string model_id = 1;  // ID único do modelo registrado
+  google.protobuf.Timestamp registration_time = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+// Requisição para descoberta de modelos
+message DiscoveryRequest {
+  string intent = 1;  // Intenção semântica
+  repeated string required_capabilities = 2;  // Capacidades necessárias
+  map<string, string> constraints = 3;  // Restrições específicas
+}
+
+message DiscoveryResponse {
+  repeated ModelMatch matches = 1;  // Modelos compatíveis encontrados
+}
+
+// Representa um modelo compatível encontrado
+message ModelMatch {
+  string model_id = 1;
+  double compatibility_score = 2;  // Score de 0 a 1
+  ReadmeProto manifest = 3;
+  map<string, string> capability_mapping = 4;
+}
+
+// Requisição para estabelecer conexão entre modelos
+message ConnectionRequest {
+  string source_model_id = 1;
+  string target_model_id = 2;
+  string intent = 3;
+  map<string, string> connection_params = 4;
+}
+
+message ConnectionResponse {
+  string connection_id = 1;
+  bool success = 2;
+  string status = 3;
+  map<string, string> connection_details = 4;
 }
