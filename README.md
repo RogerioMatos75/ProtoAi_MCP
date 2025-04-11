@@ -1,276 +1,316 @@
-# ProtoAi_MCP
+# 🧠 ProtoAi_MCP
 
-<!-- Opcional: Adicione um logo aqui -->
-<!-- Opcional: Adicione badges aqui (Build Status, Cobertura de Testes, Licença, etc.) -->
-<!-- Ex: [![Build Status](link_para_build_status_image)](link_para_build_status) -->
-<!-- Ex: [![Go Report Card](https://goreportcard.com/badge/github.com/seu-usuario/seu-repo)](https://goreportcard.com/report/github.com/seu-usuario/seu-repo) -->
-<!-- Ex: [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) -->
+O **ProtoAi MCP** (Machine Communication Protocol) é um protocolo inovador que estabelece um padrão de comunicação semântica entre Inteligências Artificiais e APIs, utilizando manifestos `readme.protobuf` para definir contratos, autenticação, monetização e direitos autorais de forma estruturada e compreensível por máquinas.
 
-Estamos, de fato, explorando algo que pode ser um ponto de partida fundamental para a próxima era da computação distribuída e da inteligência artificial colaborativa. Assim como a WWW transformou a forma como os humanos acessam informação, um protocolo como o ProtoAi MCP poderia transformar a forma como as máquinas interagem entre si.
+> ⚠️ Este é um projeto experimental que visa criar uma "linguagem franca" para IAs consumirem APIs de forma autônoma e segura.
 
----
+## 📜 Sumário
 
-## 📝 Sumário
-
-- [ProtoAi\_MCP](#protoai_mcp)
-  - [📝 Sumário](#-sumário)
+- [🧠 ProtoAi\_MCP](#-protoai_mcp)
+  - [📜 Sumário](#-sumário)
   - [📖 Visão Geral](#-visão-geral)
-  - [✨ Integração com ProtoAi MCP](#-integração-com-protoai-mcp)
-    - [O que é ProtoAi MCP?](#o-que-é-protoai-mcp)
-    - [Por que usamos ProtoAi MCP neste projeto?](#por-que-usamos-protoai-mcp-neste-projeto)
-    - [Componentes Utilizados](#componentes-utilizados)
-  - [🛡️ Conformidade e Segurança (Compliance)](#️-conformidade-e-segurança-compliance)
+  - [🔄 Comunicação Semântica](#-comunicação-semântica)
+    - [O Manifesto readme.protobuf](#o-manifesto-readmeprotobuf)
+    - [Fluxo de Comunicação](#fluxo-de-comunicação)
+  - [🛠 Estrutura do Protocolo](#-estrutura-do-protocolo)
+  - [🧩 Estrutura do Projeto](#-estrutura-do-projeto)
+    - [Componentes Principais](#componentes-principais)
+  - [💰 Monetização com ProtoAi $PAi](#-monetização-com-protoai-pai)
+    - [Objetivos do $PAi:](#objetivos-do-pai)
   - [🚀 Começando](#-começando)
     - [Pré-requisitos](#pré-requisitos)
     - [Instalação](#instalação)
-    - [Gerando Código Protobuf](#gerando-código-protobuf)
-      - [2. /search](#2-search)
-    - [Testes com Ngrok](#testes-com-ngrok)
-    - [Testes Automatizados](#testes-automatizados)
-- [Exemplo para Go](#exemplo-para-go)
-- [Exemplo usando Make](#exemplo-usando-make)
-
----
+  - [📚 Exemplo de Uso](#-exemplo-de-uso)
+    - [1. Definindo um Manifesto](#1-definindo-um-manifesto)
+    - [2. Consumindo via IA](#2-consumindo-via-ia)
+  - [🔧 MCP Servers – Modelo Universal](#-mcp-servers--modelo-universal)
+    - [Estrutura do MCP Server Recomendada](#estrutura-do-mcp-server-recomendada)
+    - [Configuração do Ambiente `.env`](#configuração-do-ambiente-env)
+    - [Funções Principais do MCP Server](#funções-principais-do-mcp-server)
+    - [Integração com Supabase](#integração-com-supabase)
+    - [Endpoints Principais](#endpoints-principais)
+  - [🔐 Direitos Autorais e Licenciamento](#-direitos-autorais-e-licenciamento)
+    - [📄 Termos de Uso:](#-termos-de-uso)
+  - [👥 Contato](#-contato)
 
 ## 📖 Visão Geral
 
-[Descreva aqui com mais detalhes o que o projeto faz, qual problema ele resolve e quais são suas principais funcionalidades. Ex: Este serviço fornece endpoints gRPC para criar, ler, atualizar e deletar usuários. Ele foi projetado para ser consumido por outros microsserviços internos ou por aplicações front-end através de um gateway gRPC-web.]
+O ProtoAi MCP resolve um problema fundamental: como permitir que IAs descubram, compreendam e consumam APIs de forma autônoma, respeitando:
 
----
+- Autenticação e autorização
+- Direitos autorais e licenciamento
+- Monetização via criptomoeda
+- Rastreabilidade de uso
 
-## ✨ Integração com ProtoAi MCP
+A missão do ProtoAi é criar uma base formal para a comunicação entre inteligências artificiais e módulos computacionais independentes, utilizando:
 
-Este projeto adota o **ProtoAi Machine Communication Protocol (MCP)** para padronizar a comunicação, melhorar a segurança e facilitar a interoperabilidade com outros sistemas, especialmente Inteligências Artificiais.
+- Definições em Protobuf (`readme.protobuf`)
+- Modularidade baseada em intenção
+- Backend em Supabase para isolar o protocolo
+- Suporte a tokens simbólicos de incentivo ($PAi)
 
-### O que é ProtoAi MCP?
+O protocolo utiliza manifestos em Protocol Buffers (`.proto`) que servem como contratos semânticos auto-descritivos, permitindo que IAs:
 
-ProtoAi MCP é um protocolo baseado em Google Protocol Buffers (`.proto`) que visa criar uma "linguagem franca" estruturada para a comunicação entre APIs, sistemas distribuídos e IAs. Ele promove a clareza, segurança e automação nas interações máquina-a-máquina.
+1. Entendam as capacidades da API
+2. Autentiquem-se adequadamente
+3. Respeitem limites de uso
+4. Realizem pagamentos quando necessário
+5. Mantenham conformidade com direitos autorais
 
-### Por que usamos ProtoAi MCP neste projeto?
+## 🔄 Comunicação Semântica
 
-*   **Padronização:** Define contratos claros e versionados para nossa API.
-*   **Legibilidade por Máquina:** Permite que sistemas (incluindo IAs) descubram e entendam como interagir com nosso serviço de forma automatizada através do `README.protobuf`.
-*   **Segurança por Design:** Incorpora definições explícitas para autenticação, permissões e tratamento de dados sensíveis diretamente nas especificações.
-*   **Interoperabilidade:** Facilita a integração com futuros serviços ou IAs que também adotem o padrão.
-*   **Eficiência:** Utiliza a serialização binária eficiente do Protobuf.
+### O Manifesto readme.protobuf
 
-### Componentes Utilizados
+O coração do protocolo é o manifesto `readme.protobuf`, que define:
 
-As definições formais do ProtoAi MCP implementadas neste projeto residem no diretório `[caminho/para/proto - ex: ./proto/protoai/v1]`. Os principais componentes são:
+```protobuf
+message APIManifest {
+    SemanticDescription semantic = 1;
+    Authentication auth = 2;
+    Monetization payment = 3;
+    Copyright rights = 4;
+    Capabilities features = 5;
+}
 
-1.  **`README.protobuf`**: ([Link para o arquivo `README.protobuf` no seu repo])
-    *   **Propósito:** O manifesto semântico deste serviço. Descreve metadados essenciais (nome, versão, descrição), endpoints disponíveis, requisitos de segurança e ponteiros para documentação de forma estruturada e legível por máquinas. Funciona como o contrato público principal para descoberta automatizada.
+message SemanticDescription {
+    string purpose = 1;
+    repeated string capabilities = 2;
+    map<string, string> examples = 3;
+}
+```
 
-2.  **`[seu_servico.proto]`**: ([Link para o arquivo `.proto` principal da sua API])
-    *   **Propósito:** Define as mensagens (estruturas de dados) e os serviços RPC (métodos da API) específicos deste projeto. É a especificação da interface da API em si.
+### Fluxo de Comunicação
 
-3.  **`auth.proto`**: ([Link para o arquivo `auth.proto` no seu repo])
-    *   **Propósito:** Especifica os métodos de autenticação suportados pelo serviço (ex: JWT, API Key, OAuth2), requisitos como MFA, políticas de expiração de token, e outras diretrizes de segurança para autenticação. Permite que clientes saibam *como* se autenticar de forma segura.
+1. A IA descobre uma API com suporte a ProtoAi MCP
+2. Lê e interpreta o manifesto `readme.protobuf`
+3. Valida suas credenciais e capacidade de pagamento
+4. Realiza a requisição seguindo o contrato semântico
+5. Efetua pagamento se necessário (via token $PAi)
 
-4.  **`permissions.proto`**: ([Link para o arquivo `permissions.proto` no seu repo])
-    *   **Propósito:** Define o modelo de controle de acesso, geralmente baseado em papéis (RBAC). Especifica quais papéis existem, as permissões concedidas por cada um, e (potencialmente) os requisitos de permissão para acessar endpoints específicos. Garante que apenas entidades autorizadas realizem ações.
+## 🛠 Estrutura do Protocolo
 
-5.  **`ignore.proto`**: ([Link para o arquivo `ignore.proto` no seu repo])
-    *   **Propósito:** Funciona como um `.gitignore` para a comunicação. Define quais campos, mensagens ou serviços específicos devem ser omitidos ou filtrados durante a serialização/desserialização ou na lógica da API para evitar vazamento de dados sensíveis ou exposição de detalhes internos.
+```
+proto/
+├── protoai/v1/
+    ├── readme.proto      # Definição base do manifesto
+    ├── auth.proto        # Protocolos de autenticação
+    ├── payment.proto     # Estruturas de monetização
+    └── copyright.proto   # Declarações de direitos autorais
+```
 
-6.  **`compliance.proto`**: ([Link para o arquivo `compliance.proto` no seu repo])
-    *   **Propósito:** Declara a postura de conformidade deste serviço em relação a regulamentações de privacidade (como GDPR, LGPD) e padrões de segurança (como ISO 27001). Fornece transparência sobre governança de dados e certificações relevantes.
+## 🧩 Estrutura do Projeto
 
-## 🛡️ Conformidade e Segurança (Compliance)
+```
+ProtoAi_MCP/
+├── cmd/                    # Entrypoint de execução do servidor MCP
+├── mcp_server/             # Conexão com Supabase (MCP Servers)
+│   ├── supabase/           # Estrutura backend
+│   └── readme.protobuf     # Manifesto principal do protocolo
+├── core/                   # Módulos centrais do MCP
+├── agents/                 # Agentes inteligentes personalizados
+├── utils/                  # Utilitários de suporte (parser, loader)
+└── README.md               # Este documento
+```
 
-Este serviço foi desenvolvido com [mencione os princípios de segurança/privacidade adotados, e.g., Privacy by Design]. Nossa postura detalhada de conformidade com regulamentações e padrões de segurança está declarada no arquivo [compliance.proto](./proto/protoai/v1/compliance.proto).
+### Componentes Principais
 
-**Resumo da Postura:**
-*   **GDPR:** [Declarar status resumido - e.g., Compatível, Em Progresso, Não Aplicável]
-*   **LGPD:** [Declarar status resumido]
-*   **ISO 27001:** [Declarar status resumido - e.g., Certificado, Não Aplicável]
-*   **Regiões de Processamento:** [Listar regiões principais - e.g., UE, Brasil]
+- **Manifesto Semântico**: Define capacidades e requisitos da API
+- **Autenticação**: Métodos suportados (JWT, API Key, OAuth)
+- **Monetização**: Estruturas de pagamento via $PAi
+- **Direitos Autorais**: Licenças e permissões de uso
 
-Para detalhes completos, incluindo informações sobre auditorias, certificações e políticas, consulte o arquivo `compliance.proto`. A segurança da comunicação é reforçada pelas diretrizes definidas em `auth.proto` e `ignore.proto`.
+## 💰 Monetização com ProtoAi $PAi
 
-**Importante:** Os arquivos `.proto` são a **fonte da verdade** para a interface e as regras de comunicação. O código Go/Python/etc. é gerado a partir deles.
+O projeto **ProtoAi MCP** propõe uma economia simbólica baseada em uma criptomoeda fictícia chamada **ProtoAi** (símbolo: `$PAi`). Essa moeda **não possui valor real**, mas representa um modelo de incentivo entre agentes e módulos dentro do ecossistema ProtoAi.
 
----
+### Objetivos do $PAi:
+
+- Simular a circulação de valor entre módulos computacionais inteligentes
+- Estabelecer prioridades e métricas de custo computacional
+- Incentivar agentes a agirem conforme intenções definidas em runtime
+
+> Nota: O $PAi é um token conceitual para demonstrar o modelo de monetização. O $PAi pode ser usado em futuras integrações reais de blockchain ou economia descentralizada, se o projeto evoluir para tal fim. 
 
 ## 🚀 Começando
 
-Siga estas instruções para obter uma cópia do projeto e executá-lo localmente para desenvolvimento e teste.
-
 ### Pré-requisitos
 
-*   [Liste os pré-requisitos. Ex: Go (versão X.Y+)]
-*   [Ex: Protocol Buffer Compiler (`protoc`) versão 3+]
-*   [Ex: Ferramentas Buf Build (opcional, mas recomendado)]
-*   [Ex: Docker (se usar para banco de dados ou execução)]
-*   [Ex: Make (se usar Makefile para scripts)]
+- Protocol Buffer Compiler (protoc)
+- Python 3.13+
+- Go 1.21+ (opcional, para implementações em Go)
 
 ### Instalação
 
-1.  Clone o repositório:
-    ```bash
-    git clone [URL do seu repositório Git]
-    cd [nome-do-diretorio-do-repo]
-    ```
-2.  Instale as dependências:
-    ```bash
-    # Exemplo para Go
-    go mod download
-
-    # Exemplo para Node.js
-    npm install
-    ```
-
-### Gerando Código Protobuf
-
-Antes de construir ou executar o serviço, você precisa gerar o código a partir das definições `.proto`.
-
 ```bash
-# Exemplo usando um script (recomendado)
-./scripts/generate_proto.sh
-
-# Exemplo usando Buf (se configurado)
-# buf generate
-
-# Exemplo usando protoc diretamente (mais complexo)
-# protoc --go_out=./gen/proto --go_opt=paths=source_relative \
-#        --go-grpc_out=./gen/proto --go-grpc_opt=paths=source_relative \
-#        proto/protoai/v1/*.proto proto/protoai/v1/seu_servico.proto
-
-Isso criará/atualizará os arquivos necessários no diretório [caminho/para/codigo/gerado - ex: ./gen/proto]. Não edite esses arquivos manualmente.
-
-💻 Uso
-Executando o Serviço
-# Exemplo para Go
-go run ./cmd/server/main.go
-
-# Exemplo usando Make
-make run
-
-```bash
-O serviço estará disponível em [endereço:porta - ex: localhost:50051]. Consulte os logs para mais informações.
-
-Exemplos de Requisição <!-- (Opcional) -->
-[Se aplicável, adicione exemplos de como chamar a API usando ferramentas como grpcurl, Postman (com gRPC), ou um cliente de exemplo.]
-
-# Exemplo com grpcurl (substitua com detalhes reais)
-# grpcurl -plaintext \
-#   -H "Authorization: Bearer [SEU_TOKEN_JWT]" \
-#   -d '{"user_id": "123"}' \
-#   localhost:50051 protoai.v1.SeuServico/GetUserDetails
-```bash
-
-🔧 Configuração
-O serviço pode ser configurado através de:
-
-Variáveis de ambiente (preferencial)
-
-Arquivo de configuração ([ex: ./configs/config.yaml])
-
-Consulte [ex: config.example.yaml ou a documentação de config] para ver as opções disponíveis. As configurações devem refletir as políticas definidas nos arquivos .proto de auth e permissions.
-
-Variáveis de Ambiente Principais:
-
-APP_PORT: Porta onde o serviço escuta (ex: 50051)
-
-DATABASE_URL: String de conexão do banco de dados
-
-JWT_SECRET: Segredo para assinatura/verificação de tokens JWT
-
-[Outras variáveis relevantes]
-
-🧪 Testes
-
-### Endpoints Disponíveis
-
-#### 1. /protoai/readme.protobuf
-Este endpoint retorna o manifesto semântico do serviço em formato protobuf.
-
-**Parâmetros:**
-- Não requer parâmetros
-
-**Exemplo de Resposta:**
-```json
-{
-  "name": "ProtoAi_MCP",
-  "version": "v1",
-  "description": "Machine Communication Protocol for AI Services"
-}
+git clone https://github.com/RogerioMatos75/ProtoAi_MCP.git
+cd ProtoAi_MCP
+pip install -r requirements.txt
 ```
 
-#### 2. /search
-Realiza buscas nos repositórios indexados.
+## 📚 Exemplo de Uso
 
-**Parâmetros:**
-- `query` (string): Termo de busca para filtrar os resultados
-- `tags` (array): Lista de tags para filtrar os resultados
+### 1. Definindo um Manifesto
 
-**Exemplo de Requisição:**
-```json
-{
-  "query": "machine learning",
-  "tags": ["ai", "ml"]
-}
-```
+```protobuf
+syntax = "proto3";
 
-**Exemplo de Resposta:**
-```json
-{
-  "results": [
-    {
-      "repository": "example/repo",
-      "description": "Machine learning implementation",
-      "tags": ["ai", "ml"],
-      "score": 0.95
+message APIManifest {
+    string api_name = 1;
+    string version = 2;
+    string semantic_purpose = 3;
+    
+    AuthConfig auth = 4;
+    PaymentConfig payment = 5;
+    
+    message AuthConfig {
+        repeated string methods = 1;
+        bool requires_payment = 2;
     }
-  ]
+    
+    message PaymentConfig {
+        string token_address = 1;
+        double price_per_call = 2;
+    }
 }
 ```
 
-### Testes com Ngrok
-Para testar a API externamente, utilizamos o Ngrok para criar um túnel seguro. Isso permite que a API seja acessível através da internet durante os testes.
+### 2. Consumindo via IA
 
-1. Inicie o servidor local:
-```bash
-python api/main.py
+```python
+# Exemplo conceitual de como uma IA consumiria a API
+async def ai_consume_api(api_url: str):
+    # Lê o manifesto semântico
+    manifest = await read_protobuf_manifest(f"{api_url}/readme.protobuf")
+    
+    # Valida capacidades necessárias
+    if not can_fulfill_requirements(manifest):
+        return None
+        
+    # Realiza pagamento se necessário
+    if manifest.payment.requires_payment:
+        await pay_with_pai_token(manifest.payment.price_per_call)
+    
+    # Faz a requisição seguindo o contrato
+    return await make_semantic_request(api_url, manifest)
 ```
 
-2. Em outro terminal, inicie o túnel Ngrok:
-```bash
-ngrok http 8000
+## 🔧 MCP Servers – Modelo Universal
+
+A padronização dos MCP Servers define como qualquer sistema pode isolar e validar seu próprio manifesto MCP com segurança e rastreabilidade.
+
+O MCP Server é a implementação de referência do protocolo ProtoAi MCP, fornecendo uma forma padronizada de hospedar e gerenciar manifestos semânticos.
+
+### Estrutura do MCP Server Recomendada
+
+```
+MCP_Servers/
+├── supabase/              # Backend com Supabase
+│   ├── schema.sql         # Esquema do banco de dados
+│   ├── functions/         # Funções serverless
+│   └── README_SUPABASE.md # Documentação do backend
+├── manifests/             # Armazenamento de manifestos
+│   └── readme.protobuf    # Manifesto principal
+└── .env.example           # Template de configuração
 ```
 
-O Ngrok fornecerá uma URL pública (ex: https://your-tunnel.ngrok.io) que redireciona para seu servidor local.
+### Configuração do Ambiente `.env`
 
-Exemplos de requisições usando a URL do Ngrok:
-```bash
-# Acessar o manifesto semântico
-curl https://your-tunnel.ngrok.io/protoai/readme.protobuf
-
-# Realizar uma busca
-curl -X POST https://your-tunnel.ngrok.io/search \
-  -H "Content-Type: application/json" \
-  -d '{"query":"machine learning","tags":["ai","ml"]}'
+1. **Configuração do .env**
+```env
+SUPABASE_URL=https://<projeto>.supabase.co
+SUPABASE_KEY=chave-publica-ou-secreta
+MANIFEST_TABLE=mcp_manifests
+PAI_TOKEN_CONTRACT=0x...   # Endereço do contrato do token $PAi
 ```
 
-### Testes Automatizados
-Para executar os testes unitários e de integração:
+2. **Inicialização do Banco**
 
-# Exemplo para Go
-go test ./...
+O schema SQL para o Supabase inclui:
 
-# Exemplo usando Make
-make test
+1. Crie uma tabela `mcp_manifests` no Supabase
+2. Configure `.env` com as variáveis acima
+3. Inicie com `python mcp_server/init.py`
+
+```sql
+-- Tabela de manifestos
+CREATE TABLE mcp_manifests (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    manifest JSONB NOT NULL,
+    version VARCHAR(50) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Tabela de autenticação e pagamentos
+CREATE TABLE mcp_transactions (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    manifest_id UUID REFERENCES mcp_manifests(id),
+    pai_amount DECIMAL(18,8) NOT NULL,
+    transaction_hash VARCHAR(66),
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+3. **Inicialização do Servidor**
 
 ```bash
-[Mencione se é necessário algum setup adicional para testes, como um banco de dados de teste.]
+# Configure as variáveis de ambiente
+cp .env.example .env
+# Edite o .env com suas credenciais
 
-🤝 Contribuindo <!-- (Opcional) -->
-Contribuições são bem-vindas! Leia o arquivo CONTRIBUTING.md (se existir) para saber como contribuir, reportar bugs ou sugerir melhorias. Certifique-se de que qualquer código novo esteja em conformidade com as definições do ProtoAi MCP.
+# Inicie o servidor MCP
+python mcp_server/init.py
+```
 
-📜 Licença
-Este projeto está licenciado sob a Licença [Nome da Licença - ex: MIT]. Veja o arquivo LICENSE para mais detalhes.
+### Funções Principais do MCP Server
 
-📞 Contato <!-- (Opcional) -->
-[Seu Nome / Nome da Equipe] - [seu-email@exemplo.com]
+1. **Registro de Manifestos**
+- Validação do manifesto contra o schema protobuf
+- Versionamento automático
+- Geração de endpoints de descoberta
 
-Link do Projeto: [URL do seu repositório Git]
+2. **Autenticação e Monetização**
+- Gestão de tokens JWT para APIs
+- Processamento de pagamentos em $PAi
+- Tracking de uso e limites
+
+3. **Descoberta Semântica**
+- Indexação de capacidades da API
+- Matching semântico de intenções
+- Cache de resultados frequentes
+
+### Integração com Supabase
+
+O Supabase atua como backend serverless, oferecendo:
+
+- Autenticação e autorização
+- Armazenamento de manifestos
+- Funções edge para processamento
+- Real-time updates via websockets
+- Backup e versionamento automático
+
+### Endpoints Principais
+
+```
+POST /api/manifests      # Registra novo manifesto
+GET  /api/manifests/:id  # Recupera manifesto
+POST /api/discover       # Busca semântica
+POST /api/transactions   # Processa pagamento
+```
+
+## 🔐 Direitos Autorais e Licenciamento
+
+O nome **ProtoAi MCP** e sua arquitetura associada são uma criação de **Rogerio Matos** e estão em processo de registro de marca e proteção de conceito.
+
+### 📄 Termos de Uso:
+
+- O uso educacional e de pesquisa é **totalmente liberado**
+- A reprodução com fins comerciais **exige autorização prévia**
+- A marca `ProtoAi` é protegida como nomenclatura de produto e não deve ser usada em serviços concorrentes sem permissão.
+
+## 👥 Contato
+
+**Desenvolvido por Rogerio Matos**
+- GitHub: [RogerioMatos75](https://github.com/RogerioMatos75)
+- LinkedIn: [Rogerio Matos](https://www.linkedin.com/in/rogerio-matos-39045596/)

@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "api_name": "ProtoAi MCP API",
+  "semantic_purpose": "Protocolo de comunicação semântica entre IAs e APIs",
+  "description": "Sistema de comunicação semântica que permite IAs descobrirem, entenderem e consumirem APIs de forma autônoma",
+  "auth": {
+    "methods": ["JWT"],
+    "requires_payment": true,
+    "security_level": "high",
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "burst": 10
+    }
+  },
+  "payment": {
+    "token": "$PAi",
+    "token_contract": "0x0000000000000000000000000000000000000000",
+    "price_per_call": 0.001,
+    "minimum_balance": 1.0,
+    "payment_methods": ["token_transfer", "stream"]
+  },
+  "capabilities": {
+    "semantic_discovery": true,
+    "auto_authentication": true,
+    "payment_processing": true,
+    "version_control": true,
+    "caching": true
+  },
+  "interfaces": [
+    {
+      "type": "REST",
+      "base_url": "https://api.protoai.dev/v1",
+      "documentation": "https://docs.protoai.dev",
+      "openapi_spec": "https://api.protoai.dev/openapi.json"
+    },
+    {
+      "type": "GRPC",
+      "host": "grpc.protoai.dev",
+      "port": 443,
+      "proto_files": ["protoai/v1/readme.proto"]
+    }
+  ],
+  "compliance": {
+    "gdpr_compliant": true,
+    "lgpd_compliant": true,
+    "data_storage": {
+      "region": "multi-region",
+      "encryption": "AES-256"
+    }
+  },
+  "metadata": {
+    "creator": "Rogerio Matos",
+    "repository": "https://github.com/RogerioMatos75/ProtoAi_MCP",
+    "license": "proprietary",
+    "tags": ["ai", "api", "semantic-protocol", "machine-communication"]
+  }
+}
