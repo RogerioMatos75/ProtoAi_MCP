@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "api_name": "",
+  "semantic_purpose": "",
+  "description": "",
+  "auth": {
+    "methods": ["JWT"],
+    "requires_payment": false,
+    "security_level": "medium",
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "burst": 10
+    }
+  },
+  "interfaces": [
+    {
+      "type": "REST",
+      "base_url": "",
+      "documentation_url": "",
+      "openapi_spec_url": "",
+      "endpoints": [
+        {
+          "path": "",
+          "method": "GET",
+          "semantic_purpose": "",
+          "parameters": [],
+          "response_format": "",
+          "rate_limit": {
+            "requests_per_minute": 60
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "semantic_discovery": true,
+    "auto_authentication": false,
+    "version_control": true
+  },
+  "metadata": {
+    "creator": "",
+    "repository": "",
+    "tags": [],
+    "created_at": "",
+    "updated_at": ""
+  }
+}

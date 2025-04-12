@@ -1,24 +1,6 @@
 import { serve } from "https://deno.land/std@0.217.0/http/server.ts";
 import { createClient } from "@supabase/supabase-js";
-
-// Tipos
-export interface SearchRequest {
-    query: string;
-    intent?: string;
-    capabilities?: string[];
-    filters?: {
-        tags?: string[];
-        payment_required?: boolean;
-        auth_methods?: string[];
-    };
-}
-
-export interface SearchResult {
-    manifest_id: string;
-    score: number;
-    manifest: any;
-    matched_capabilities: string[];
-}
+import { ManifestHandler } from "../../handlers/manifest_handler.ts";
 
 // Configuração do Supabase
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -29,116 +11,95 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
+const manifestHandler = new ManifestHandler();
 
-// Handler principal
 serve(async (req) => {
-    try {
-        const { query, intent, capabilities, filters } = await req.json() as SearchRequest;
+    if (req.method === 'POST') {
+        try {
+            const manifest = await req.json();
+            const result = await manifestHandler.processManifest(manifest);
 
-        // Verifica cache primeiro
-        const queryHash = await crypto.subtle.digest(
-            'SHA-256',
-            new TextEncoder().encode(JSON.stringify({ query, intent, capabilities, filters }))
-        );
-        const queryHashHex = Array.from(new Uint8Array(queryHash))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
+            if (!result.success) {
+                return new Response(
+                    JSON.stringify({
+                        error: 'Manifesto inválido',
+                        details: result.errors
+                    }),
+                    {
+                        status: 400,
+                        headers: { 'Content-Type': 'application/json' }
+                    }
+                );
+            }
 
-        const { data: cachedResult } = await supabase
-            .from('semantic_cache')
-            .select('results')
-            .eq('query_hash', queryHashHex)
-            .single();
+            // Armazena o manifesto validado
+            const { data, error } = await supabase
+                .from('mcp_manifests')
+                .insert({
+                    id: result.manifest_id,
+                    manifest: manifest,
+                    validation_result: result.validation_result
+                })
+                .select()
+                .single();
 
-        if (cachedResult) {
+            if (error) {
+                throw error;
+            }
+
             return new Response(
-                JSON.stringify(cachedResult.results),
-                { status: 200 }
+                JSON.stringify({
+                    success: true,
+                    manifest_id: result.manifest_id,
+                    data
+                }),
+                {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
+        } catch (_error) {
+            return new Response(
+                JSON.stringify({ error: 'Erro interno no servidor' }),
+                {
+                    status: 500,
+                    headers: { 'Content-Type': 'application/json' }
+                }
             );
         }
+    } else if (req.method === 'GET') {
+        try {
+            const { data, error } = await supabase
+                .from('mcp_manifests')
+                .select('*');
 
-        // Busca semântica em manifestos
-        let query_builder = supabase
-            .from('mcp_manifests')
-            .select('*');
+            if (error) {
+                throw error;
+            }
 
-        // Aplica filtros
-        if (filters?.tags) {
-            query_builder = query_builder.contains('manifest->metadata->tags', filters.tags);
-        }
-
-        if (filters?.payment_required !== undefined) {
-            query_builder = query_builder.eq('manifest->auth->requires_payment', filters.payment_required);
-        }
-
-        if (filters?.auth_methods) {
-            query_builder = query_builder.contains('manifest->auth->methods', filters.auth_methods);
-        }
-
-        const { data: manifests, error } = await query_builder;
-
-        if (error) {
-            throw error;
-        }
-
-        // Calcula relevância semântica
-        const results: SearchResult[] = manifests
-            .map(record => {
-                const manifest = record.manifest;
-
-                // Calcula score baseado em vários fatores
-                let score = 0;
-
-                // Matching de texto
-                if (manifest.description?.toLowerCase().includes(query.toLowerCase())) {
-                    score += 0.3;
+            return new Response(
+                JSON.stringify(data),
+                {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' }
                 }
-
-                if (manifest.semantic_purpose?.toLowerCase().includes(query.toLowerCase())) {
-                    score += 0.4;
+            );
+        } catch (_error) {
+            return new Response(
+                JSON.stringify({ error: 'Erro interno no servidor' }),
+                {
+                    status: 500,
+                    headers: { 'Content-Type': 'application/json' }
                 }
-
-                // Matching de intenção
-                if (intent && manifest.capabilities?.semantic_discovery) {
-                    score += 0.5;
-                }
-
-                // Matching de capacidades
-                const matched_capabilities = capabilities?.filter(cap =>
-                    manifest.capabilities?.[cap] === true
-                ) ?? [];
-
-                score += (matched_capabilities.length / (capabilities?.length ?? 1)) * 0.4;
-
-                return {
-                    manifest_id: record.id,
-                    score,
-                    manifest,
-                    matched_capabilities
-                };
-            })
-            .filter(result => result.score > 0)
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 10); // Limita a 10 resultados
-
-        // Salva no cache
-        await supabase
-            .from('semantic_cache')
-            .insert({
-                query_hash: queryHashHex,
-                results,
-                expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24h
-            });
-
-        return new Response(
-            JSON.stringify(results),
-            { status: 200 }
-        );
-
-    } catch (error) {
-        return new Response(
-            JSON.stringify({ error: 'Erro interno no servidor' }),
-            { status: 500 }
-        );
+            );
+        }
     }
+
+    return new Response(
+        JSON.stringify({ error: 'Método não suportado' }),
+        {
+            status: 405,
+            headers: { 'Content-Type': 'application/json' }
+        }
+    );
 });

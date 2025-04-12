@@ -9,6 +9,7 @@ O **ProtoAi MCP** (Machine Communication Protocol) é um protocolo inovador que 
 - [🧠 ProtoAi\_MCP](#-protoai_mcp)
   - [📜 Sumário](#-sumário)
   - [📖 Visão Geral](#-visão-geral)
+  - [🧠 Fluxo de Comunicação ProtoAi MCP](#-Fluxo-de-Comunicação-ProtoAi-MCP)
   - [🔄 Comunicação Semântica](#-comunicação-semântica)
     - [O Manifesto readme.protobuf](#o-manifesto-readmeprotobuf)
     - [Fluxo de Comunicação](#fluxo-de-comunicação)
@@ -56,6 +57,39 @@ O protocolo utiliza manifestos em Protocol Buffers (`.proto`) que servem como co
 3. Respeitem limites de uso
 4. Realizem pagamentos quando necessário
 5. Mantenham conformidade com direitos autorais
+
+## 🧠 Fluxo de Comunicação ProtoAi MCP
+
+```text
+┌────────────────────────────┐
+│       Usuário/Intenção     │
+│ (Input via Drive, CLI, API)│
+└────────────┬───────────────┘
+             │
+             ▼
+     ┌──────────────────┐
+     │  MCP Intention   │  ◄─── Recebe e interpreta
+     └────────┬─────────┘
+              │
+              ▼
+      ┌──────────────┐
+      │ MCP Servers  │ (Supabase)
+      └────┬─────────┘
+           │
+           ▼
+    ┌──────────────┐
+    │ Manifesto    │ (readme.protobuf)
+    │ + Módulos    │
+    └──────────────┘
+           │
+           ▼
+    ┌──────────────┐
+    │  Agentes IA  │ (Pandora, etc)
+    └──────────────┘
+           │
+           ▼
+    🔁 Resposta Inteligente
+```
 
 ## 🔄 Comunicação Semântica
 
