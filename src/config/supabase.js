@@ -1,11 +1,10 @@
 const { createClient } = require('@supabase/supabase-js');
 const { Pool } = require('pg');
-const { OpenAIEmbeddings } = require('langchain/embeddings/openai');
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 // Verifica se as variáveis de ambiente necessárias estão definidas
-const requiredEnvVars = ['DATABASE_URL', 'DIRECT_URL', 'SUPABASE_URL', 'SUPABASE_KEY', 'OPENAI_API_KEY'];
+const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'DATABASE_URL'];
 const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
 
 if (missingEnvVars.length > 0) {
@@ -25,14 +24,12 @@ const pool = new Pool(poolConfig);
 
 // Configuração do Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const openAIKey = process.env.OPENAI_API_KEY;
-
-const embeddings = new OpenAIEmbeddings({ openAIApiKey: openAIKey });
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: {
-        persistSession: false
+        persistSession: false,
+        autoRefreshToken: false
     }
 });
 
@@ -127,25 +124,29 @@ async function logAudit(userId, action, resourceType, resourceId, metadata = {})
 // Função para testar a conexão
 async function testConnection() {
     try {
-        console.log('🔍 Testando conexão pool PostgreSQL...');
+        console.log('🔍 Testando conexão PostgreSQL via pool...');
         const poolClient = await pool.connect();
         const result = await poolClient.query('SELECT NOW()');
         poolClient.release();
-        console.log('✅ Conexão pool PostgreSQL OK:', result.rows[0].now);
+        console.log('✅ Conexão PostgreSQL OK:', result.rows[0].now);
         
         console.log('🔍 Testando conexão Supabase...');
+        // Tenta uma consulta básica que deve funcionar com a service role key
         const { data, error } = await supabase
-            .from('models')
+            .from('mcp_manifests')
             .select('count')
+            .limit(1)
             .single();
         
         if (error) {
             console.error('❌ Erro ao conectar com Supabase:', error.message);
+            if (error.details) console.error('Detalhes:', error.details);
+            if (error.hint) console.error('Hint:', error.hint);
             return false;
         }
         
         console.log('✅ Conexão Supabase OK!');
-        console.log('📊 Dados recebidos:', data);
+        console.log('📊 Teste de leitura bem-sucedido');
         return true;
     } catch (error) {
         console.error('❌ Erro ao testar conexões:', error.message);

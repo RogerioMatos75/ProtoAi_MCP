@@ -1,0 +1,77 @@
+version: "3.8"
+services:
+  postgres:
+    image: supabase/postgres:15.1.0.90
+    container_name: supabase-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - pg_data:/var/lib/postgresql/data
+
+  studio:
+    image: supabase/studio:20230913-7d625c7
+    container_name: supabase-studio
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_KEY}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  kong:
+    image: kong:2.8.1
+    container_name: supabase-kong
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong.yml
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl
+    volumes:
+      - ./kong.yml:/kong.yml:ro
+
+  auth:
+    image: supabase/gotrue:v2.82.4
+    container_name: supabase-auth
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      GOTRUE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_DB_DRIVER: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      API_EXTERNAL_URL: ${SUPABASE_URL}
+
+  edge-runtime:
+    image: supabase/edge-runtime:v1.16.5
+    container_name: supabase-edge-runtime
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_KEY}
+      DENO_DIR: /tmp/deno_dir
+    volumes:
+      - ./functions:/home/deno/functions:ro
+      - edge_runtime_cache:/tmp/deno_dir
+
+volumes:
+  pg_data:
+  edge_runtime_cache:

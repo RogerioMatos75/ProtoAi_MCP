@@ -1,0 +1,60 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: auth-v1
+    url: http://auth:9999
+    routes:
+      - name: auth-v1-all
+        strip_path: true
+        paths:
+          - /auth/v1
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          key_names:
+            - apikey
+          key_in_header: true
+          key_in_query: true
+          hide_credentials: true
+      - name: acl
+        config:
+          allow:
+            - anonymous
+            - authenticated
+
+  - name: edge-functions
+    url: http://edge-runtime:9000
+    routes:
+      - name: edge-functions-all
+        strip_path: true
+        paths:
+          - /functions/v1
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          key_names:
+            - apikey
+          key_in_header: true
+          key_in_query: true
+          hide_credentials: true
+      - name: acl
+        config:
+          allow:
+            - anonymous
+            - authenticated
+
+consumers:
+  - username: anonymous
+    keyauth_credentials:
+      - key: ${SUPABASE_ANON_KEY}
+    acls:
+      - group: anonymous
+
+  - username: service_role
+    keyauth_credentials:
+      - key: ${SUPABASE_SERVICE_KEY}
+    acls:
+      - group: authenticated
